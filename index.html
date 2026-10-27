@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviator Tracker</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;font-family:Arial,sans-serif;background:#11151e;color:white;text-align:center}
+h1{color:#ff4b55}
+.card{max-width:450px;margin:20px auto;padding:20px;background:#222938;border-radius:16px}
+input,button{width:100%;padding:14px;margin:8px 0;border:0;border-radius:8px;font-size:16px}
+button{background:#ff4b55;color:white;font-weight:bold}
+.secondary{background:#38445a}
+.stat{font-size:28px;color:#65e6ad}
+#history{overflow-wrap:anywhere;line-height:2}
+.note{font-size:13px;color:#bdc5d3;line-height:1.6}
+</style>
+</head>
+<body>
+<h1>✈ AVIATOR TRACKER</h1>
+<p>Record and analyze completed game rounds</p>
+
+<div class="card">
+  <h2>Enter Round Result</h2>
+  <input id="multiplier" type="number" min="1" step="0.01" placeholder="Multiplier, e.g. 1.50">
+  <button onclick="addRound()">ADD RESULT</button>
+  <button class="secondary" onclick="clearHistory()">CLEAR HISTORY</button>
+</div>
+
+<div class="card">
+  <h2>Total Rounds</h2>
+  <div class="stat" id="total">0</div>
+  <h2>Average Multiplier</h2>
+  <div class="stat" id="average">—</div>
+  <h2>Recorded History</h2>
+  <p id="history">No results recorded yet.</p>
+</div>
+
+<div class="card">
+  <h3>Important Note</h3>
+  <p class="note">This tracker records results you enter manually. It does not connect to the Aviator game or predict future outcomes. Past results cannot guarantee the next result.</p>
+</div>
+
+<script>
+let rounds=[];
+
+function addRound(){
+  const field=document.getElementById('multiplier');
+  const value=Number(field.value);
+
+  if(field.value==='' || !Number.isFinite(value) || value<1){
+    alert('Please enter a valid multiplier of 1.00 or higher.');
+    return;
+  }
+
+  rounds.unshift(value);
+  render();
+  field.value='';
+}
+
+function render(){
+  document.getElementById('total').textContent=rounds.length;
+
+  if(rounds.length===0){
+    document.getElementById('average').textContent='—';
+    document.getElementById('history').textContent='No results recorded yet.';
+    return;
+  }
+
+  const average=rounds.reduce((sum,n)=>sum+n,0)/rounds.length;
+  document.getElementById('average').textContent=average.toFixed(2)+'x';
+
+  document.getElementById('history').textContent=
+    rounds.map((n,i)=>(i+1)+'. '+n.toFixed(2)+'x').join(' | ');
+}
+
+function clearHistory(){
+  if(confirm('Clear all recorded results?')){
+    rounds=[];
+    render();
+  }
+}
+</script>
+</body>
+</html>
